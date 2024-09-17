@@ -1,4 +1,4 @@
-import { CoverageChartType, CoverageChartTypeUnion, DuplicationsType, DuplicationsTypeUnion, QualityGateBadgeTypeUnion } from "@t/app/decorator/enums";
+import { CoverageChartType, CoverageChartTypeUnion, DuplicationsType, DuplicationsTypeUnion, QualityGateBadgeTypeUnion } from "@/app/decorator/enums";
 
 const IMAGE_ROOT = "https://raw.githubusercontent.com/mc1arke/sonarqube-community-branch-plugin/master/src/main/resources/static";
 const _COVERAGE = "Coverage";

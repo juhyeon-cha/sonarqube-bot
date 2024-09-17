@@ -21,9 +21,19 @@
     "paths": {
       "@/*": ["./src/*"],
       "@t/*": ["./@types/*"]
-    }
-  },
-  "ts-node": {
-    "esm": true
+    },
+    "typeRoots": ["./node_modules/@types", "./@types"]
   }
+  // "ts-node": {
+  //   "esm": true,
+  //   "transpileOnly": true,
+  //   "files": true,
+  //   "moduleTypes": {
+  //     "eslint.config.js": "esm"
+  //   },
+  //   "compilerOptions": {
+  //     "module": "ESNext",
+  //     "esModuleInterop": true
+  //   }
+  // }
 }

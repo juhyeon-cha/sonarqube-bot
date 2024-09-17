@@ -1,8 +1,8 @@
 import { Sonar } from "@/sonarqube/sonar";
-import { SonarMetricKey } from "@t/sonarqube/enums";
+import { SonarMetricKey } from "@/sonarqube/enums";
 import { isNil } from "lodash-es";
 import { templates } from "@/app/decorator/templates";
-import { CoverageChartType, DuplicationsType, QualityGateBadgeType } from "@t/app/decorator/enums";
+import { CoverageChartType, DuplicationsType, QualityGateBadgeType } from "@/app/decorator/enums";
 
 export async function makeDecorationComment(sonar: Sonar, repositoryName: string, pullRequestId: number): Promise<string> {
   const projectKey = await sonar.projects.search(`filter="${repositoryName}"`).then((res) => res.data.components?.[0]?.key);

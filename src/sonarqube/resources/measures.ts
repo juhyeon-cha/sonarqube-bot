@@ -1,5 +1,5 @@
 import { AxiosInstance, AxiosResponse } from "axios";
-import * as SonarDefinition from "../../../@types/sonarqube/enums";
+import * as SonarDefinition from "@/sonarqube/enums";
 import { MeasureComponentRequest, MeasureComponentResponse } from "@t/sonarqube/resources/measures";
 
 export enum MeasuresAdditionalFields {
