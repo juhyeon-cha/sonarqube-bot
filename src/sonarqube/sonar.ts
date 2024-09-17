@@ -10,7 +10,7 @@ export interface SonarConfig extends AxiosRequestConfig {
   baseURL: string;
 }
 
-export default class Sonar {
+export class Sonar {
   instance: AxiosInstance;
 
   components: Resources.Components;

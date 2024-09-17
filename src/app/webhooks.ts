@@ -2,44 +2,30 @@ import { App } from "octokit";
 import type { webhooks as OpenAPIWebhooks } from "@octokit/openapi-webhooks-types";
 import type { WebhookEventDefinition } from "@octokit/webhooks/dist-types/types";
 import type { Api } from "@octokit/plugin-rest-endpoint-methods/dist-types/types";
-import { BOT_NAME } from "@/config";
+import { BOT_NAME, SONAR_USERNAME, SONAR_PASSWORD, SONAR_URL } from "@/config";
 import { makeDecorationComment } from "@/app/decorator";
-import Sonar from "@/sonarqube/sonar";
+import { Sonar } from "@/sonarqube/sonar";
 
 interface EmitterWebhookEvent<TEventName extends keyof OpenAPIWebhooks> {
   octokit: Api;
   payload: WebhookEventDefinition<TEventName>;
 }
 
-async function pullRequestOpenedHandler({ octokit, payload }: EmitterWebhookEvent<"pull-request-opened">) {
-  console.log(`Received a pull request event for #${payload.pull_request.number}`);
+const sonar = new Sonar({
+  auth: {
+    username: SONAR_USERNAME || "",
+    password: SONAR_PASSWORD || "",
+  },
+  baseURL: SONAR_URL || "",
+});
 
-  await octokit.rest.issues
-    .createComment({
-      owner: payload.repository.owner.login,
-      repo: payload.repository.name,
-      issue_number: payload.pull_request.number,
-      body: "",
-    })
-    .catch((error) => {
-      if (error.response) {
-        console.error(`Error! Status: ${error.response.status}. Message: ${error.response.data.message}`);
-      } else {
-        console.error(error);
-      }
-    });
-}
-
-async function pullRequestLabeledHandler({ octokit, payload }: EmitterWebhookEvent<"pull-request-labeled">) {
-  console.log(`Received a pull request label event for #${payload.pull_request.number}`);
-
-  // makeDecorationComment(sonar, payload.repository.name, payload.pull_request.number);
-
+async function createOrUpdateComment(octokit: Api, owner: string, repo: string, issue_number: number) {
+  const commentBody = await makeDecorationComment(sonar, repo, issue_number);
   const comments = await octokit.rest.issues
     .listComments({
-      owner: payload.repository.owner.login,
-      repo: payload.repository.name,
-      issue_number: payload.pull_request.number,
+      owner,
+      repo,
+      issue_number,
     })
     .then((response) => response.data);
 
@@ -47,10 +33,10 @@ async function pullRequestLabeledHandler({ octokit, payload }: EmitterWebhookEve
   if (comment) {
     await octokit.rest.issues
       .updateComment({
-        owner: payload.repository.owner.login,
-        repo: payload.repository.name,
+        owner,
+        repo,
         comment_id: comment.id,
-        body: "",
+        body: commentBody,
       })
       .catch((error) => {
         if (error.response) {
@@ -62,10 +48,10 @@ async function pullRequestLabeledHandler({ octokit, payload }: EmitterWebhookEve
   } else {
     await octokit.rest.issues
       .createComment({
-        owner: payload.repository.owner.login,
-        repo: payload.repository.name,
-        issue_number: payload.pull_request.number,
-        body: "",
+        owner,
+        repo,
+        issue_number,
+        body: commentBody,
       })
       .catch((error) => {
         if (error.response) {
@@ -77,29 +63,27 @@ async function pullRequestLabeledHandler({ octokit, payload }: EmitterWebhookEve
   }
 }
 
+async function pullRequestOpenedHandler({ octokit, payload }: EmitterWebhookEvent<"pull-request-opened">) {
+  console.log(`Received a pull request opened event for #${payload.pull_request.number}`);
+
+  await createOrUpdateComment(octokit, payload.repository.owner.login, payload.repository.name, payload.pull_request.number);
+}
+
+async function pullRequestLabeledHandler({ octokit, payload }: EmitterWebhookEvent<"pull-request-labeled">) {
+  console.log(`Received a pull request labeled event for #${payload.pull_request.number}`);
+
+  await createOrUpdateComment(octokit, payload.repository.owner.login, payload.repository.name, payload.pull_request.number);
+}
+
 async function checkRunCompletedHandler({ octokit, payload }: EmitterWebhookEvent<"check-run-completed">) {
   console.log(`Received a check run completed event for ${payload.check_run.name}`);
 
-  await octokit.rest.issues.listComments({
-    owner: payload.repository.owner.login,
-    repo: payload.repository.name,
-    issue_number: payload.check_run.id,
-  });
-
-  await octokit.rest.issues
-    .updateComment({
-      owner: payload.repository.owner.login,
-      repo: payload.repository.name,
-      comment_id: 0,
-      body: "",
-    })
-    .catch((error) => {
-      if (error.response) {
-        console.error(`Error! Status: ${error.response.status}. Message: ${error.response.data.message}`);
-      } else {
-        console.error(error);
-      }
-    });
+  const pullRequest = payload.check_run.pull_requests[0];
+  if (!pullRequest) {
+    console.log("No pull request found in the check run event");
+    return;
+  }
+  await createOrUpdateComment(octokit, payload.repository.owner.login, payload.repository.name, pullRequest.number);
 }
 
 export async function registerWebhooks(app: App) {

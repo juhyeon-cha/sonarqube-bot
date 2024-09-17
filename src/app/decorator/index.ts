@@ -1,4 +1,4 @@
-import Sonar from "@/sonarqube/sonar";
+import { Sonar } from "@/sonarqube/sonar";
 import { SonarMetricKey } from "@t/sonarqube/enums";
 import { isNil } from "lodash-es";
 import { templates } from "@/app/decorator/templates";

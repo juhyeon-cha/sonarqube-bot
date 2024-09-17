@@ -2,7 +2,7 @@ import http from "http";
 import { createNodeMiddleware } from "@octokit/webhooks";
 import { app } from "@/app/app";
 import { registerWebhooks } from "@/app/webhooks";
-import { env } from "@/config";
+import { PORT } from "@/config";
 
 async function start(port: number) {
   // Optional: Get & log the authenticated app's name
@@ -26,4 +26,4 @@ async function start(port: number) {
   });
 }
 
-await start(env.PORT);
+await start(PORT);

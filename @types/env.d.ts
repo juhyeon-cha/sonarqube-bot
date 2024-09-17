@@ -8,4 +8,9 @@ interface ProcessEnv extends NodeJS.ProcessEnv {
   PRIVATE_KEY_PATH: string;
   WEBHOOK_SECRET: string;
   ENTERPRISE_HOSTNAME: string | undefined;
+
+  // env variables for SonarQube
+  SONAR_USERNAME: string;
+  SONAR_PASSWORD: string;
+  SONAR_URL: string;
 }
