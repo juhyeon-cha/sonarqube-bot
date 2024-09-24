@@ -9,18 +9,18 @@ export enum QualityGatesOperator {
 export default class QualityGates {
   instance: AxiosInstance;
 
-  readonly path = "qualitygates";
+  readonly path = "/api/qualitygates";
 
   constructor(instance: AxiosInstance) {
     this.instance = instance;
   }
 
   projectStatus(
+    projectKey?: string,
+    pullRequest?: number,
     analysisId?: string,
     branch?: string,
     projectId?: string,
-    projectKey?: string,
-    pullRequest?: string,
   ): Promise<AxiosResponse<QualityGateProjectStatusResponse, QualityGateProjectStatusRequest>> {
     return this.instance.get(`${this.path}/project_status`, {
       params: {

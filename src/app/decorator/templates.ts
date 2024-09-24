@@ -10,33 +10,33 @@ export const templates = {
   qualityGateBadge: {
     image: (qualityGateBadgeType: QualityGateBadgeTypeUnion) => `![${qualityGateBadgeType}](${IMAGE_ROOT}/checks/QualityGateBadge/${qualityGateBadgeType}.svg)`,
   },
-  title: "## Analysis Details",
+  title: "# Analysis Details",
   issues: {
-    title: (issueCount: number) => `### ${issueCount} Issues`,
-    bug: (bugCount: number) => `- ![bug](${IMAGE_ROOT}/IssueType/bug.svg) ${bugCount} Bugs`,
-    vulnerability: (vulnerabilityCount: number) => `- ![vulnerability](${IMAGE_ROOT}/IssueType/vulnerability.svg) ${vulnerabilityCount} Vulnerabilities`,
-    securityHotspot: (securityHotspotCount: number) => `- ![security_hotspot](${IMAGE_ROOT}/IssueType/security_hotspot.svg) ${securityHotspotCount} Security Hotspots`,
-    codeSmell: (codeSmellCount: number) => `- ![code_smell](${IMAGE_ROOT}/IssueType/code_smell.svg) ${codeSmellCount} Code Smells`,
+    title: (issueCount: number) => `## ${issueCount} Issues`,
+    bug: (bugCount: number) => `- ![bug](${IMAGE_ROOT}/common/bug.svg) ${bugCount} Bugs`,
+    vulnerability: (vulnerabilityCount: number) => `- ![vulnerability](${IMAGE_ROOT}/common/vulnerability.svg) ${vulnerabilityCount} Vulnerabilities`,
+    securityHotspot: (securityHotspotCount: number) => `- ![security_hotspot](${IMAGE_ROOT}/common/security_hotspot.svg) ${securityHotspotCount} Security Hotspots`,
+    codeSmell: (codeSmellCount: number) => `- ![code_smell](${IMAGE_ROOT}/common/code_smell.svg) ${codeSmellCount} Code Smells`,
   },
   coverageAndDuplication: {
     noData: "No data available",
-    title: `### ${_COVERAGE} and ${_DUPLICATION}`,
-    coverage: (coverageChartType: CoverageChartTypeUnion) => {
+    title: `## ${_COVERAGE} and ${_DUPLICATION}`,
+    coverage: (coverageChartType: CoverageChartTypeUnion, coverage: number, estimatedPercent: string) => {
       let text = NO_COVERAGE_INFO;
       if (coverageChartType !== CoverageChartType.NO_COVERAGE_INFO) {
-        text = `${coverageChartType} % ${_COVERAGE}`;
+        text = `${coverage.toFixed(2)} % ${_COVERAGE}`;
       }
 
-      return `![${text}](${IMAGE_ROOT}/checks/CoverageChart/${coverageChartType}.svg) ${text}`;
+      return `![${text}](${IMAGE_ROOT}/checks/CoverageChart/${coverageChartType}.svg) ${text} (${estimatedPercent}% Estimated coverage after merge)`;
     },
-    duplication: (duplicationsType: DuplicationsTypeUnion) => {
+    duplication: (duplicationsType: DuplicationsTypeUnion, duplication: number, estimatedPercent: string) => {
       let text = NO_DUPLICATION_INFO;
       if (duplicationsType !== DuplicationsType.NO_DUPLICATION_INFO) {
-        text = `${duplicationsType} % ${_DUPLICATION}`;
+        text = `${duplication.toFixed(2)} % ${_DUPLICATION}`;
       }
 
-      return `![${text}](${IMAGE_ROOT}/checks/Duplications/${duplicationsType}.svg) ${text}`;
+      return `![${text}](${IMAGE_ROOT}/checks/Duplications/${duplicationsType}.svg) ${text} (${estimatedPercent}% Estimated coverage after merge)`;
     },
-    estimatedAfterMerge: (estimatedPercent: number) => `(${estimatedPercent}% Estimated coverage after merge)`,
   },
+  viewInSonar: (sonarUrl: string, projectKey: string, pullRequestId: number) => `[View in SonarQube](${sonarUrl}/dashboard?id=${projectKey}&pullRequest=${pullRequestId})`,
 };

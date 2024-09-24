@@ -214,7 +214,6 @@ export enum SonarMetricKey {
   conditionsByLine = "conditions_by_line",
   coveredConditionsByLine = "covered_conditions_by_line",
   coverage = "coverage",
-  newCoverage = "new_coverage",
   lineCoverage = "line_coverage",
   newLineCoverage = "new_line_coverage",
   coverageLineHitsData = "coverage_line_hits_data",
@@ -230,4 +229,10 @@ export enum SonarMetricKey {
   testErrors = "test_errors",
   testFailures = "test_failures",
   testSuccessDensity = "test_success_density",
+  // Quality Gate.
+  newReliabilityRating = "new_reliability_rating",
+  newSecurityRating = "new_security_rating",
+  newMaintainabilityRating = "new_maintainability_rating",
+  newCoverage = "new_coverage",
+  newDuplicatedLinesDensity = "new_duplicated_lines_density",
 }

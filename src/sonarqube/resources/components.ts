@@ -1,10 +1,10 @@
-import { ComponentAppRequest, ComponentAppResponse } from "@t/sonarqube/resources/components";
+import { ComponentAppRequest, ComponentAppResponse, ComponentSearchProjectsRequest, ComponentSearchProjectsResponse } from "@t/sonarqube/resources/components";
 import { AxiosInstance, AxiosResponse } from "axios";
 
 export default class Components {
   instance: AxiosInstance;
 
-  readonly path = "components";
+  readonly path = "/api/components";
 
   constructor(instance: AxiosInstance) {
     this.instance = instance;
@@ -16,6 +16,28 @@ export default class Components {
         component,
         branch,
         pullRequest,
+      },
+    });
+  }
+
+  searchProjects(
+    filter?: string,
+    f?: string,
+    facets?: string,
+    asc: string = "true",
+    p: number = 1,
+    ps: number = 100,
+    s: string = "name",
+  ): Promise<AxiosResponse<ComponentSearchProjectsResponse, ComponentSearchProjectsRequest>> {
+    return this.instance.get(`${this.path}/search_projects`, {
+      params: {
+        asc,
+        f,
+        facets,
+        filter,
+        p,
+        ps,
+        s,
       },
     });
   }

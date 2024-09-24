@@ -15,7 +15,7 @@ export enum MeasuresMetricSortFilter {
 export default class Measures {
   instance: AxiosInstance;
 
-  readonly path = "measures";
+  readonly path = "/api/measures";
 
   constructor(instance: AxiosInstance) {
     this.instance = instance;

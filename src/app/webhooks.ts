@@ -5,6 +5,7 @@ import type { Api } from "@octokit/plugin-rest-endpoint-methods/dist-types/types
 import { BOT_NAME, SONAR_USERNAME, SONAR_PASSWORD, SONAR_URL } from "@/config";
 import { makeDecorationComment } from "@/app/decorator";
 import { Sonar } from "@/sonarqube/sonar";
+import { isNil } from "lodash-es";
 
 interface EmitterWebhookEvent<TEventName extends keyof OpenAPIWebhooks> {
   octokit: Api;
@@ -17,6 +18,13 @@ const sonar = new Sonar({
     password: SONAR_PASSWORD || "",
   },
   baseURL: SONAR_URL || "",
+  transformRequest: (data) => {
+    if (isNil(data)) return data;
+    Object.keys(data).forEach((key) => {
+      if (!data[key]) delete data[key];
+    });
+    return JSON.stringify(data);
+  },
 });
 
 async function createOrUpdateComment(octokit: Api, owner: string, repo: string, issue_number: number) {

@@ -11,20 +11,17 @@ export interface SonarConfig extends AxiosRequestConfig {
 }
 
 export class Sonar {
+  config: SonarConfig;
   instance: AxiosInstance;
-
   components: Resources.Components;
-
   measures: Resources.Measures;
-
   projectPullRequests: Resources.ProjectPullRequests;
-
   projects: Resources.Projects;
-
   qualityGates: Resources.QualityGates;
 
   constructor(config: SonarConfig) {
-    this.instance = axios.create(config);
+    this.config = config;
+    this.instance = axios.create(this.config);
     this.components = new Resources.Components(this.instance);
     this.measures = new Resources.Measures(this.instance);
     this.projectPullRequests = new Resources.ProjectPullRequests(this.instance);

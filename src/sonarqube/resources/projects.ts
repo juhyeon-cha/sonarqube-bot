@@ -9,7 +9,7 @@ export enum ProjectsVisibility {
 export default class Projects {
   instance: AxiosInstance;
 
-  readonly path = "projects";
+  readonly path = "/api/projects";
 
   constructor(instance: AxiosInstance) {
     this.instance = instance;

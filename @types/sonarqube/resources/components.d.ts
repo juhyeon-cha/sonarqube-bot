@@ -26,3 +26,26 @@ export interface ComponentAppMeasures {
   sqaleRating: string;
   debtRatio: string;
 }
+
+export interface ComponentSearchProjectsRequest {
+  asc: string;
+  f?: string;
+  facets?: string;
+  filter?: string;
+  p: number;
+  ps: number;
+  s: string;
+}
+
+export interface ComponentSearchProjectsResponse extends PagingResponse {
+  components: ComponentProjects[];
+}
+
+export interface ComponentProjects {
+  key: string;
+  name: string;
+  qualifier: string;
+  isFavorite: boolean;
+  tags: string[];
+  visibility: string;
+}

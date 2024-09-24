@@ -4,7 +4,7 @@ import { AxiosInstance, AxiosResponse } from "axios";
 export default class ProjectPullRequests {
   instance: AxiosInstance;
 
-  readonly path = "project_pull_requests";
+  readonly path = "/api/project_pull_requests";
 
   constructor(instance: AxiosInstance) {
     this.instance = instance;
