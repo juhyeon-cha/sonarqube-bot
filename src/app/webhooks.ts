@@ -77,12 +77,6 @@ async function pullRequestOpenedHandler({ octokit, payload }: EmitterWebhookEven
   await createOrUpdateComment(octokit, payload.repository.owner.login, payload.repository.name, payload.pull_request.number);
 }
 
-async function pullRequestLabeledHandler({ octokit, payload }: EmitterWebhookEvent<"pull-request-labeled">) {
-  console.log(`Received a pull request labeled event for #${payload.pull_request.number}`);
-
-  await createOrUpdateComment(octokit, payload.repository.owner.login, payload.repository.name, payload.pull_request.number);
-}
-
 async function checkRunCompletedHandler({ octokit, payload }: EmitterWebhookEvent<"check-run-completed">) {
   console.log(`Received a check run completed event for ${payload.check_run.name}`);
 
@@ -97,7 +91,6 @@ async function checkRunCompletedHandler({ octokit, payload }: EmitterWebhookEven
 export async function registerWebhooks(app: App) {
   // Register event handlers
   app.webhooks.on("pull_request.opened", pullRequestOpenedHandler);
-  app.webhooks.on("pull_request.labeled", pullRequestLabeledHandler);
   app.webhooks.on("check_run.completed", checkRunCompletedHandler);
 
   app.webhooks.onError((error) => {
