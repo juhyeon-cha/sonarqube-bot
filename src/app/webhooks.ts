@@ -83,7 +83,7 @@ async function pullRequestOpenedHandler({ octokit, payload }: EmitterWebhookEven
 async function checkRunCompletedHandler({ octokit, payload }: EmitterWebhookEvent<"check-run-completed">) {
   console.log(`Received a check run completed event for ${payload.check_run.name}`);
 
-  let pullRequestId = payload.check_run.pull_requests[0]?.number;
+  let pullRequestId: number | null = payload.check_run.pull_requests[0]?.number || null;
   const commentBody = payload.check_run.output.summary;
   if (isNil(pullRequestId) && isNil(commentBody) === false) {
     pullRequestId = extractPullRequestIdFromComment(commentBody);

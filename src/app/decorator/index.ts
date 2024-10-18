@@ -92,7 +92,7 @@ export async function makeDecorationComment(sonar: Sonar, repositoryName: string
   return comment.join("\n");
 }
 
-export function extractPullRequestIdFromComment(commentBody: string): number {
+export function extractPullRequestIdFromComment(commentBody: string): number | null {
   const match = commentBody.match(/\[View in SonarQube\]\(.*pullRequest=(\d+)\)/);
-  return Number(match?.[1] || -1);
+  return Number(match?.[1] || null);
 }
