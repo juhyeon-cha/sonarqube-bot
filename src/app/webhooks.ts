@@ -3,7 +3,7 @@ import type { webhooks as OpenAPIWebhooks } from "@octokit/openapi-webhooks-type
 import type { WebhookEventDefinition } from "@octokit/webhooks/dist-types/types";
 import type { Api } from "@octokit/plugin-rest-endpoint-methods/dist-types/types";
 import { BOT_NAME, SONAR_USERNAME, SONAR_PASSWORD, SONAR_URL } from "@/config";
-import { makeDecorationComment } from "@/app/decorator";
+import { extractPullRequestIdFromComment, makeDecorationComment } from "@/app/decorator";
 import { Sonar } from "@/sonarqube/sonar";
 import { isNil } from "lodash-es";
 
@@ -27,8 +27,11 @@ const sonar = new Sonar({
   },
 });
 
-async function createOrUpdateComment(octokit: Api, owner: string, repo: string, issue_number: number) {
-  const commentBody = await makeDecorationComment(sonar, repo, issue_number);
+async function createOrUpdateComment(octokit: Api, owner: string, repo: string, issue_number: number, commentBody?: string | null) {
+  if (isNil(commentBody)) {
+    commentBody = await makeDecorationComment(sonar, repo, issue_number);
+  }
+
   const comments = await octokit.rest.issues
     .listComments({
       owner,
@@ -80,12 +83,16 @@ async function pullRequestOpenedHandler({ octokit, payload }: EmitterWebhookEven
 async function checkRunCompletedHandler({ octokit, payload }: EmitterWebhookEvent<"check-run-completed">) {
   console.log(`Received a check run completed event for ${payload.check_run.name}`);
 
-  const pullRequest = payload.check_run.pull_requests[0];
-  if (!pullRequest) {
+  let pullRequestId = payload.check_run.pull_requests[0]?.number;
+  const commentBody = payload.check_run.output.summary;
+  if (isNil(pullRequestId) && isNil(commentBody) === false) {
+    pullRequestId = extractPullRequestIdFromComment(commentBody);
+  }
+  if (isNil(pullRequestId)) {
     console.log("No pull request found in the check run event");
     return;
   }
-  await createOrUpdateComment(octokit, payload.repository.owner.login, payload.repository.name, pullRequest.number);
+  await createOrUpdateComment(octokit, payload.repository.owner.login, payload.repository.name, pullRequestId, commentBody);
 }
 
 export async function registerWebhooks(app: App) {
