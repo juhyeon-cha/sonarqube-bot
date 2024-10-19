@@ -51,3 +51,12 @@ jobs:
           subject-name: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME}}
           subject-digest: ${{ steps.push.outputs.digest }}
           push-to-registry: true
+
+      - name: Delete Package Versions
+        uses: actions/delete-package-versions@v5
+        with:
+          package-type: container
+          package-name: sonarqube-bot
+          min-versions-to-keep: 1
+          token: ${{ secrets.GITHUB_TOKEN }}
+          ignore-versions: '^v(\\d)\\.(\\d+)\\.(\\d+)(-rc\\d+)?'
