@@ -59,4 +59,5 @@ jobs:
           package-name: sonarqube-bot
           min-versions-to-keep: 1
           token: ${{ secrets.GITHUB_TOKEN }}
-          ignore-versions: '^v(\\d)\\.(\\d+)\\.(\\d+)(-rc\\d+)?'
+          delete-only-pre-release-versions: true
+          ignore-versions: '^v(\\d)\\.(\\d+)\\.(\\d+)(-rc\\d+)?$'
